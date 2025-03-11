@@ -36,6 +36,15 @@ def main():
     # Read all atoms from the extxyz file
     atoms_list = read(args.input, index=":")
     
+    # Extract forces and store them in atoms.info
+    for atoms in atoms_list:
+        if atoms.calc is not None:
+            forces = atoms.get_forces()
+            atoms.set_array("REF_forces", forces)
+            energy = atoms.get_total_energy()
+            atoms.info["REF_energy"] = energy
+        atoms.calc = None
+    
     # Shuffle the dataset to randomize the split
     random.seed(args.seed)
     random.shuffle(atoms_list)
